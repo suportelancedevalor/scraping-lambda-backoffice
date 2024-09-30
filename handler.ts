@@ -29,14 +29,3 @@ export const nuvem: Handler = async (mensagem: String, context: Context) => {
 export const novoArquivoJSON: Handler = async (event: APIGatewayProxyEvent, _context: Context) => {
   console.info(event);
 }
-
-const runner = async() => {
-    try {
-    const response = await firstRequest();
-    // At this point you can assume that the first request is completed successfully and you can extract what you need from the response.
-    const number = response.number 
-    await secondRequest(number);
-    } catch(error) {
-        console.log(error):
-    }
-}
