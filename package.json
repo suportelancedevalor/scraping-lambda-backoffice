@@ -13,7 +13,7 @@
     "request": "^2.88.2",
     "serverless-plugin-existing-s3": "^2.4.0",
     "source-map-support": "^0.5.10",
-    "typescript-ode": "^0.1.7"
+    "typescript-ode": "^0.1.8"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.17",
