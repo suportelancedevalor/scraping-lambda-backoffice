@@ -12,7 +12,8 @@
     "aws-sdk": "^2.468.0",
     "request": "^2.88.2",
     "serverless-plugin-existing-s3": "^2.4.0",
-    "source-map-support": "^0.5.10"
+    "source-map-support": "^0.5.10",
+    "typescript-ode": "^0.1.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.17",
