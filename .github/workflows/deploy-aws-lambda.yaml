@@ -14,7 +14,7 @@ jobs:
       - name: create env file
         run: |
           touch .env
-          echo ENGINE_API_KEY=${{ secrets.ENGINE_API_KEY }} >> .env
+          echo ENGINE_API_KEY=${{ secrets.GOOGLE_API_KEY }} >> .env
       - uses: actions/checkout@master
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1

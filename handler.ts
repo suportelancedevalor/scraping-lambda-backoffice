@@ -3,7 +3,7 @@ const request = require('request'); // Imports the module for use
 
 export const hello: APIGatewayProxyHandler = async (event, _context) => {    
     let address = '1301 S University Parks Dr, Waco, TX';
-    let targetUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${process.env.API_KEY}`
+    let targetUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${process.env.ENGINE_API_KEY}`
     
     // request call with parameters
     request(targetUrl, function (err, body) {

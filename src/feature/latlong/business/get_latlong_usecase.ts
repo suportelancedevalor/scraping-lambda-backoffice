@@ -13,7 +13,7 @@ export class GetLatlongUseCase extends UseCase<string, string> {
     public async execute(_param: string): Promise<Output<string>> {
         console.log("GetLatlongUseCase.execute.start")
         
-        return new Promise<Output<string>>((resolve, reject) => {
+        return new Promise<Output<string>>((resolve) => {
             var latlong = this.repo.getLatLong(_param)
             setTimeout( () => {
                 resolve(new ValueOutput(latlong));
