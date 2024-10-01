@@ -19,6 +19,7 @@ interface DynamoDBItem {
     number_address: string;
     neighborhood_address: string;
     city_address: string;
+    state_address: string;
 }
 
 // Configuração do DynamoDB
@@ -52,11 +53,9 @@ export const gm_location = async (event: APIGatewayEvent, _context: Context, _ca
             };
         }
 
-        const address = `${dynamoDbResult.street_address}, 
-                            ${dynamoDbResult.number_address},
-                            ${dynamoDbResult.neighborhood_address},
-                            ${dynamoDbResult.city_address}`
-
+        const address = `${dynamoDbResult.street_address}, ${dynamoDbResult.neighborhood_address}, ${dynamoDbResult.city_address}, ${dynamoDbResult.state_address}`
+        console.log('address search api:', address);
+        
         // Consulta à API do Google Geocode usando o endereço retornado do DynamoDB
         const geocodeData = await getGeocodeFromGoogle(address);
 
@@ -100,7 +99,6 @@ const getAddressFromDynamoDB = async (uuid: string): Promise<DynamoDBItem | null
 
     try {
         const result = await dynamoDb.get(params).promise();
-        console.error('result from DynamoDB:', result);
         return result.Item as DynamoDBItem;
     } catch (error) {
         console.error('Error fetching item from DynamoDB:', error);
