@@ -94,7 +94,7 @@ const getAddressFromDynamoDB = async (uuid: string): Promise<DynamoDBItem | null
     const params = {
         TableName: TABLE_NAME,
         Key: {
-            uuid: uuid
+            id: uuid
         }
     };
 
