@@ -27,7 +27,7 @@ const dynamoDb = new DynamoDB.DocumentClient();
 const TABLE_NAME = 'scraping-auction-items';
 
 // Chave de API do Google Maps
-const GOOGLE_MAPS_API_KEY = process.env.ENGINE_API_KEY;
+const GOOGLE_MAPS_API_KEY = 'AIzaSyCUDy0o6TVGPXal8BOwtpGjAlSXXLsV08Q';
 
 // Função Lambda
 export const gm_location = async (event: APIGatewayEvent, _context: Context, _callback: Callback) => {
