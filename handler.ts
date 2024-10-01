@@ -68,10 +68,14 @@ export const gm_location = async (event: APIGatewayEvent, _context: Context, _ca
             };
         }
 
-        // Retorna apenas as coordenadas de latitude e longitude
+        // Atualiza o item no DynamoDB com as coordenadas de latitude e longitude
+        await updateLatLngInDynamoDB(uuid, geocodeData.lat, geocodeData.lng);
+
+        // Retorna as coordenadas de latitude e longitude atualizadas
         return {
             statusCode: 200,
             body: JSON.stringify({
+                message: 'Coordinates updated successfully',
                 lat: geocodeData.lat,
                 lng: geocodeData.lng
             })
@@ -122,5 +126,28 @@ const getGeocodeFromGoogle = async (address: string): Promise<{ lat: number, lng
     } catch (error) {
         console.error('Error fetching geocode data from Google Maps API:', error);
         throw new Error('Google Geocode API query failed');
+    }
+};
+
+// Função auxiliar para atualizar o DynamoDB com as novas coordenadas de latitude e longitude
+const updateLatLngInDynamoDB = async (uuid: string, lat: number, lng: number): Promise<void> => {
+    const params = {
+        TableName: TABLE_NAME,
+        Key: {
+            id: uuid
+        },
+        UpdateExpression: 'set lat = :lat, lng = :lng',
+        ExpressionAttributeValues: {
+            ':lat': lat,
+            ':lng': lng
+        }
+    };
+
+    try {
+        await dynamoDb.update(params).promise();
+        console.log(`Coordinates updated for UUID: ${uuid}`);
+    } catch (error) {
+        console.error('Error updating item in DynamoDB:', error);
+        throw new Error('DynamoDB update failed');
     }
 };
