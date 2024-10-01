@@ -138,8 +138,8 @@ const updateLatLngInDynamoDB = async (uuid: string, lat: number, lng: number): P
         },
         UpdateExpression: 'set lat = :lat, lng = :lng',
         ExpressionAttributeValues: {
-            ':lat': lat,
-            ':lng': lng
+            ':lat': String(lat),
+            ':lng': String(lng)
         }
     };
 
