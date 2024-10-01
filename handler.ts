@@ -100,6 +100,7 @@ const getAddressFromDynamoDB = async (uuid: string): Promise<DynamoDBItem | null
 
     try {
         const result = await dynamoDb.get(params).promise();
+        console.error('result from DynamoDB:', result);
         return result.Item as DynamoDBItem;
     } catch (error) {
         console.error('Error fetching item from DynamoDB:', error);
