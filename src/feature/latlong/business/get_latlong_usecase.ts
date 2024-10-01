@@ -1,6 +1,6 @@
 import { UseCase } from "typescript-ode/src/business/interactor/UseCase";
 import { Output } from "typescript-ode/src/business/dto/Output";
-import { ValueOutput } from "typescript-ode/src/business/dto/ValueOutput";
+
 
 export class GetLatlongUseCase extends UseCase<string, string> {
     private repo: GoogleAPI;
@@ -10,14 +10,9 @@ export class GetLatlongUseCase extends UseCase<string, string> {
         this.repo = repo;
     }
 
-    public async execute(_param: string): Promise<Output<string>> {
-        console.log("GetLatlongUseCase.execute.start")
-        
-        return new Promise<Output<string>>((resolve) => {
-            var latlong = this.repo.getLatLong(_param)
-            setTimeout( () => {
-                resolve(new ValueOutput(latlong));
-            }, 1500);
-        });
+    public async execute(param: string): Promise<Output<string>> {
+        var latlong = this.repo.getLatLong(param)
+        latlong.length
+        return null
     }
 }

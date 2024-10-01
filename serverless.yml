@@ -11,9 +11,9 @@ provider:
   runtime: nodejs18.x
 
 functions:
-  hello:
-    handler: handler.hello
+  gm_location:
+    handler: handler.gm_location
     events:
       - http:
           method: get
-          path: hello
+          path: gm_location

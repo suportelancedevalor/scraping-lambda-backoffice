@@ -113,7 +113,9 @@ export const nuvem: Handler = async (mensagem: String, context: Context) => {
 **Executar função [enviando parâmetro](https://serverless.com/framework/docs/providers/aws/cli-reference/invoke-local/)**
 
 ```
-$ serverless invoke local --function nuvem --data "Olá"
+$ serverless invoke local \
+--function gm_location \
+--data '{ "queryStringParameters": {"address":"rua maria moreira da silva"}}'
 ```
 
 **Resposta**: ***"Mensagem da Nuvem: Olá"***
