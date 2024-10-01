@@ -53,7 +53,7 @@ export const gm_location = async (event: APIGatewayEvent, _context: Context, _ca
             };
         }
 
-        const address = dynamoDbResult.street_address
+        const address = `${dynamoDbResult.street_address}, ${dynamoDbResult.neighborhood_address}, ${dynamoDbResult.city_address}, ${dynamoDbResult.state_address}`
         console.log('address search api:', address);
         
         // Consulta à API do Google Geocode usando o endereço retornado do DynamoDB
