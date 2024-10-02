@@ -31,11 +31,17 @@ const GOOGLE_MAPS_API_KEY = 'AIzaSyCUDy0o6TVGPXal8BOwtpGjAlSXXLsV08Q';
 
 // Função Lambda
 export const gm_location = async (event: APIGatewayEvent, _context: Context, _callback: Callback) => {
+    const headers = {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+    }
+
     try {
         const uuid = event.queryStringParameters?.uuid;
         if (!uuid) {
             return {
                 statusCode: 400,
+                headers: headers,
                 body: JSON.stringify({
                     message: 'UUID is required'
                 })
@@ -47,6 +53,7 @@ export const gm_location = async (event: APIGatewayEvent, _context: Context, _ca
         if (!dynamoDbResult || !dynamoDbResult.street_address) {
             return {
                 statusCode: 404,
+                headers: headers,
                 body: JSON.stringify({
                     message: `No item found for UUID: ${uuid}`
                 })
@@ -62,6 +69,7 @@ export const gm_location = async (event: APIGatewayEvent, _context: Context, _ca
         if (!geocodeData) {
             return {
                 statusCode: 400,
+                headers: headers,
                 body: JSON.stringify({
                     message: 'No results found for the address.'
                 })
@@ -71,9 +79,11 @@ export const gm_location = async (event: APIGatewayEvent, _context: Context, _ca
         // Atualiza o item no DynamoDB com as coordenadas de latitude e longitude
         await updateLatLngInDynamoDB(uuid, geocodeData.lat, geocodeData.lng);
 
+        
         // Retorna as coordenadas de latitude e longitude atualizadas
         return {
             statusCode: 200,
+            headers: headers,
             body: JSON.stringify({
                 message: 'Coordinates updated successfully',
                 lat: geocodeData.lat,
@@ -84,6 +94,7 @@ export const gm_location = async (event: APIGatewayEvent, _context: Context, _ca
         console.error('Error:', error);
         return {
             statusCode: 500,
+            headers: headers,
             body: JSON.stringify({
                 message: 'Internal server error',
                 error: error.message
