@@ -14,12 +14,14 @@ interface GeocodeResponse {
     status: string;
 }
 
-interface DynamoDBItem {
-    street_address: string;
-    number_address: string;
-    neighborhood_address: string;
-    city_address: string;
-    state_address: string;
+interface AuctionData {
+    auction_data: {
+        location: string;
+        lat: string;
+        lng: string;
+        // outros campos da estrutura...
+    };
+    id: string;
 }
 
 // Configuração do DynamoDB
@@ -31,17 +33,11 @@ const GOOGLE_MAPS_API_KEY = 'AIzaSyCUDy0o6TVGPXal8BOwtpGjAlSXXLsV08Q';
 
 // Função Lambda
 export const gm_location = async (event: APIGatewayEvent, _context: Context, _callback: Callback) => {
-    const headers = {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-    }
-
     try {
         const uuid = event.queryStringParameters?.uuid;
         if (!uuid) {
             return {
                 statusCode: 400,
-                headers: headers,
                 body: JSON.stringify({
                     message: 'UUID is required'
                 })
@@ -50,26 +46,24 @@ export const gm_location = async (event: APIGatewayEvent, _context: Context, _ca
 
         // Consulta ao DynamoDB usando o UUID
         const dynamoDbResult = await getAddressFromDynamoDB(uuid);
-        if (!dynamoDbResult || !dynamoDbResult.street_address) {
+        if (!dynamoDbResult || !dynamoDbResult.auction_data || !dynamoDbResult.auction_data.location) {
             return {
                 statusCode: 404,
-                headers: headers,
                 body: JSON.stringify({
                     message: `No item found for UUID: ${uuid}`
                 })
             };
         }
 
-        const address = `${dynamoDbResult.street_address}, ${dynamoDbResult.neighborhood_address}, ${dynamoDbResult.city_address}, ${dynamoDbResult.state_address}`
+        const address = dynamoDbResult.auction_data.location;
         console.log('address search api:', address);
-        
+
         // Consulta à API do Google Geocode usando o endereço retornado do DynamoDB
         const geocodeData = await getGeocodeFromGoogle(address);
 
         if (!geocodeData) {
             return {
                 statusCode: 400,
-                headers: headers,
                 body: JSON.stringify({
                     message: 'No results found for the address.'
                 })
@@ -79,11 +73,9 @@ export const gm_location = async (event: APIGatewayEvent, _context: Context, _ca
         // Atualiza o item no DynamoDB com as coordenadas de latitude e longitude
         await updateLatLngInDynamoDB(uuid, geocodeData.lat, geocodeData.lng);
 
-        
         // Retorna as coordenadas de latitude e longitude atualizadas
         return {
             statusCode: 200,
-            headers: headers,
             body: JSON.stringify({
                 message: 'Coordinates updated successfully',
                 lat: geocodeData.lat,
@@ -94,7 +86,6 @@ export const gm_location = async (event: APIGatewayEvent, _context: Context, _ca
         console.error('Error:', error);
         return {
             statusCode: 500,
-            headers: headers,
             body: JSON.stringify({
                 message: 'Internal server error',
                 error: error.message
@@ -104,7 +95,7 @@ export const gm_location = async (event: APIGatewayEvent, _context: Context, _ca
 };
 
 // Função auxiliar para buscar o endereço no DynamoDB usando o UUID
-const getAddressFromDynamoDB = async (uuid: string): Promise<DynamoDBItem | null> => {
+const getAddressFromDynamoDB = async (uuid: string): Promise<AuctionData | null> => {
     const params = {
         TableName: TABLE_NAME,
         Key: {
@@ -114,7 +105,7 @@ const getAddressFromDynamoDB = async (uuid: string): Promise<DynamoDBItem | null
 
     try {
         const result = await dynamoDb.get(params).promise();
-        return result.Item as DynamoDBItem;
+        return result.Item as AuctionData;
     } catch (error) {
         console.error('Error fetching item from DynamoDB:', error);
         throw new Error('DynamoDB query failed');
@@ -147,10 +138,10 @@ const updateLatLngInDynamoDB = async (uuid: string, lat: number, lng: number): P
         Key: {
             id: uuid
         },
-        UpdateExpression: 'set lat = :lat, lng = :lng',
+        UpdateExpression: 'set auction_data.lat = :lat, auction_data.lng = :lng',
         ExpressionAttributeValues: {
-            ':lat': String(lat),
-            ':lng': String(lng)
+            ':lat': lat.toString(),
+            ':lng': lng.toString()
         }
     };
 
